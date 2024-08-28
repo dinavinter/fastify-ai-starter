@@ -1,0 +1,30 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "moduleDetection": "force",
+
+    // Ignore module structure
+    "module": "preserve",
+ 
+    "outDir": "./types",
+    "moduleResolution": "node",
+    "pretty": true,
+    
+    "declaration": true, 
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "esnext.symbol",
+      "es2023"
+    ], 
+    "resolveJsonModule":true 
+  },
+  "tsx":{
+    
+  }
+}  
