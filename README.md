@@ -11,7 +11,7 @@ pnpm dev
 
 ### Generate Text
 
-```http request  
+```http  
  GET /thought/text
 ```
 
