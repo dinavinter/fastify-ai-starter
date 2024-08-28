@@ -3,39 +3,39 @@ import {streamObject, streamText} from "ai";
 import {openaiGP4o} from "../sap-ai/openai";
 import {FastifyPluginAsyncZod} from "fastify-type-provider-zod";
 import {EventMessage} from "fastify-sse-v2";
-import  "@fastify/swagger";
- import {FastifyInstance} from "fastify";
- 
-function trimCode(this: any, key: string, value: any) :any{
+import "@fastify/swagger";
+import {FastifyInstance} from "fastify";
+
+function trimCode(this: any, key: string, value: any): any {
     //replace all between <code> and </code> with ... or <pre>...</pre>
-    
+
 }
-   
-type SwaggerApi= Exclude<ReturnType<FastifyInstance["swagger"]> ,string>
+
+type SwaggerApi = Exclude<ReturnType<FastifyInstance["swagger"]>, string>
 
 function apiText(swagger: SwaggerApi): string {
-    const {['/dynamic-docs']: dom,['/']: root ,  ...api}= swagger.paths!
+    const {['/dynamic-docs']: dom, ['/']: root, ...api} = swagger.paths!
 
-    const apis = Object.entries(api).map(([path, pathItem]) => 
+    const apis = Object.entries(api).map(([path, pathItem]) =>
         Object.entries(pathItem).flatMap(([method, operation]) => {
-        if (operation && typeof operation === "object" && "x-source" in operation && typeof operation["x-source"] === "string" && "description"  in operation && typeof operation["description"] === "string") {
-            const {['x-source']: source, description, ...rest} = operation;
-            return {
-                method,
-                path,
-                description: description?.replace(source, ''),
-                ...rest
+            if (operation && typeof operation === "object" && "x-source" in operation && typeof operation["x-source"] === "string" && "description" in operation && typeof operation["description"] === "string") {
+                const {['x-source']: source, description, ...rest} = operation;
+                return {
+                    method,
+                    path,
+                    description: description?.replace(source, ''),
+                    ...rest
+                }
             }
-        }
-        return operation
-    })).flat()
+            return operation
+        })).flat()
 
-    return JSON.stringify(apis );
+    return JSON.stringify(apis);
 
 }
- 
+
 const routes: FastifyPluginAsyncZod = async function (fastify) {
-     
+
     fastify.route({
             url: '/dynamic-docs',
             method: 'GET',
@@ -48,39 +48,30 @@ const routes: FastifyPluginAsyncZod = async function (fastify) {
                 produces: ['text/event-stream']
             },
             async handler(request, reply) {
-                const api = fastify.swagger()
-             
-                console.log(apiText(api)) 
+                fastify.log.debug(apiText(fastify.swagger()))
 
-                async function* streamElements(): AsyncIterable<EventMessage > {
-                    const controller = new AbortController();
-
-                    reply.raw.on('close', () => {
-                        controller.abort();
-                    })
+                async function* streamElements(): AsyncIterable<EventMessage> {
+                    
                     const {elementStream} = await streamObject({
                         output: 'array',
                         model: openaiGP4o(),
                         temperature: 0.7,
                         topP: 1,
-                        maxTokens:4096,
-                        abortSignal: controller.signal,
+                        maxTokens: 4096,
                         schema: z.object({
-                            // event: z.string().default("message").describe('the event the element will be attached to, message is for the root, for example, if an event :message and element: <div sse-swap="inner1"  /> the element will be attached to the root div in the page ,  then next event can contain event:inner1 and element: <p  /> and the element will be swaped to the inner1 div'),
                             outerHTML: z.string().describe('The outer html of the element'),
                             api: z.string().describe('The api you are simulating or interacting with in the element, for example /thought/text')
                         }),
-                        prompt: `Generate HTML code that interacts with the following API: """${apiText(api)}""".  The elements you return will be added to the main div in an HTML page.
+                        prompt: `Generate HTML code that interacts with the following API: """${apiText(fastify.swagger())}""".  The elements you return will be added to the main div in an HTML page.
     Use HTMX for interactivity and stream response, use the SSE extension for streaming SSE responses, and other hx attributes for non-SSE responses. (hx-ext ="sse", sse-connect , sse-swap, hx-swap) vs (hx-trigger, hx-get, hx-swap, etc.)
-    Output only valid HTML elements.
-    Use Tailwind CSS for styling and animation.
-    Make the elements understandable, fun, interactive, and colorful..`.replace(/"/g, '\\"').replace(/\n/g, '\\n')
-
+    Output only valid HTML elements. Use Tailwind CSS for styling and animation.
+    Make the elements understandable, fun, interactive, and colorful..`  .replace(/"/g, '\\"').replace(/\n/g, '\\n')
                     });
+                    
                     for await (const {outerHTML} of elementStream) {
-                        yield {
-                            data: outerHTML
-                        }
+                        if (request.socket.destroyed) return "done";
+
+                        yield {data: outerHTML}
                     }
                     yield {event: 'done', data: 'done'}
                 }
@@ -94,7 +85,7 @@ const routes: FastifyPluginAsyncZod = async function (fastify) {
 export default routes;
 
 
-const example=`
+const example = `
 data: <div class='text-xl p-4 m-4 bg-blue-100 rounded-lg shadow-lg' hx-get='/thought/text' hx-trigger='load' hx-swap='outerHTML'>Loading thought...</div>
 
 data: <div class='text-xl p-4 m-4 bg-green-100 rounded-lg shadow-lg' hx-ext='sse' sse-connect='/thought/text/stream' sse-swap='message' hx-swap='textContent transition:true swap:1s settle:1s' sse-close='done'>Waiting for thought stream...</div>

@@ -23,8 +23,5 @@
       "es2023"
     ], 
     "resolveJsonModule":true 
-  },
-  "tsx":{
-    
-  }
+  } 
 }  
