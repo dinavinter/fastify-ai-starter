@@ -1,5 +1,6 @@
 import {FastifyPluginAsync} from "fastify";
 import {serializerCompiler, validatorCompiler, ZodTypeProvider} from "fastify-type-provider-zod";
+import fp from "fastify-plugin";
 
 export const zod:FastifyPluginAsync= async function fastify( fastify, opts){
     fastify =fastify.withTypeProvider<ZodTypeProvider>();
@@ -7,6 +8,4 @@ export const zod:FastifyPluginAsync= async function fastify( fastify, opts){
     fastify.setSerializerCompiler(serializerCompiler);
 }
 
-// @ts-ignore
-zod[Symbol.for('skip-override')] = true
-export default zod;
+export default fp(zod);

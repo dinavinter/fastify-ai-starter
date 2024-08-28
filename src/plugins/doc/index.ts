@@ -1,10 +1,9 @@
 import {FastifyPluginAsyncZod} from "fastify-type-provider-zod";
+import fp from "fastify-plugin";
 
 const docs: FastifyPluginAsyncZod<any> = async function (fastify) {
     await fastify.register(import('./openapi'));
     await fastify.register(import('./code'));
 }
 
-// @ts-ignore
-docs[Symbol.for('skip-override')] = true
-export default docs;
+export default fp(docs);

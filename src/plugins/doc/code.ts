@@ -1,6 +1,7 @@
 import {FastifyPluginAsync} from "fastify";
 import beautify from "js-beautify";
 import {z} from "zod";
+import fp from "fastify-plugin";
 
 function prettyPrint(fn: Function) {
     return beautify.js(fn.toString(), {
@@ -68,6 +69,4 @@ const sourceCodeDoc: FastifyPluginAsync<any> = async function (fastify) {
 }
 
 
-// @ts-ignore
-sourceCodeDoc[Symbol.for('skip-override')] = true
-export default sourceCodeDoc;
+export default fp(sourceCodeDoc);

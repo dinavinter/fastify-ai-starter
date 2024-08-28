@@ -16,3 +16,4 @@ app.listen({ port: 3000 }, function (err) {
         process.exit(1)
     }
 })
+export default app;

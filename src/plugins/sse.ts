@@ -2,7 +2,7 @@ import {FastifyPluginAsyncZod} from "fastify-type-provider-zod";
 import {z} from "zod";
 import {FastifyReply, FastifyRequest} from "fastify";
 import FastifySSEPlugin, {EventMessage} from "fastify-sse-v2";
-
+import fp from "fastify-plugin";
 
 /* 
    Plugin to allow to stream server sent events from clients who do not support it, like @scalar/api-reference
@@ -20,7 +20,7 @@ const sseProxy: FastifyPluginAsyncZod<{prefix?:string, condition: (req: FastifyR
             reply.sse = async function (this: FastifyReply, source: AsyncIterable<EventMessage>) {
                 this.type("text/html");
                 this.header("cache-control", "no-cache,no-transform");
-                return this.send(`<embed type="text/html"  src="${req.protocol}://${req.hostname}${prefix}?url=${encodeURIComponent(req.url)}" style="width:100%;height:100%;" />`)
+                return this.send(`<embed type="text/html"  src="${req.hostname.startsWith("localhost")? req.protocol : "https"}://${req.hostname}${prefix}?url=${encodeURIComponent(req.url)}" style="width:100%;height:100%;" />`)
             }
         }
         next()
@@ -60,6 +60,4 @@ const sseProxy: FastifyPluginAsyncZod<{prefix?:string, condition: (req: FastifyR
       
 }
     
-// @ts-ignore
-sseProxy[Symbol.for('skip-override')] = true
-export default sseProxy;
+export default fp(sseProxy);

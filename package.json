@@ -3,21 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "app.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "pnpm tsx --env-file=.env ./src/dev.ts --watch",
-    "build": "tsc -p tsconfig.json --noEmit",
-    "type-check": "tsc --noEmit"
-  },
+  "packageManager": "pnpm@9.6.0",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "build": "pnpx pkgroll && pnpm copy",
+    "copy": "cp -r ./public/ ./dist",
+    "dev": "pnpx tsx --env-file=.env ./src/dev.ts",
+    "dev:vercel": "pnpm build && vercel dev --listen 5005"
+  },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.54",
     "ai": "^3.3.19",
     "dotenv": "^16.4.5",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
     "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1",
     "fastify-sse-v2": "^4.0.0",
     "fastify-type-provider-zod": "^2.0.0",
     "js-beautify": "^1.15.1",
@@ -30,8 +32,37 @@
     "@tsconfig/node22": "^22.0.0",
     "@types/js-beautify": "^1.14.3",
     "@types/node": "^22.5.0",
+    "@vercel/node": "^3.0.22",
     "pino-pretty": "^11.2.2",
+    "tsup": "^8.2.4",
     "tsx": "^4.18.0",
     "typescript": "^5.5.4"
-  } 
+  },
+  "main": "./dist/app.cjs",
+  "module": "./dist/app.mjs",
+  "types": "./dist/app.d.cts",
+  "exports": {
+    "app": {
+      "require": {
+        "types": "./dist/app.d.cts",
+        "default": "./dist/app.cjs"
+      },
+      "import": {
+        "types": "./dist/app.d.mts",
+        "default": "./dist/app.mjs"
+      }
+    },
+    "serverless": {
+      "require": "./dist/serverless.cjs",
+      "import": "./dist/serverless.mjs",
+      "types": "./dist/serverless.d.ts"
+    },
+    "dev": {
+      "require": "./dist/dev.cjs",
+      "import": "./dist/dev.mjs",
+      "types": "./dist/dev.d.ts"
+    }
+     
+  },
+  "bin": "./dist/dev.mjs"
 }

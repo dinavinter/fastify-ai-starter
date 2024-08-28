@@ -1,7 +1,7 @@
 import   {FastifyPluginAsync} from 'fastify'
 
 
-export const app:FastifyPluginAsync= async function fastify( fastify, opts){
+const app:FastifyPluginAsync= async function fastify( fastify, opts){
     await fastify.register(import('./routes/home')) 
     await fastify.register(import('./plugins/zod'))
     await fastify.register( import('./plugins/doc'))

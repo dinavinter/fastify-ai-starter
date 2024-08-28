@@ -1,6 +1,7 @@
 import {FastifyPluginAsync} from "fastify";
 import fastifySwagger from "@fastify/swagger";
 import {jsonSchemaTransform} from "fastify-type-provider-zod";
+import fp from "fastify-plugin";
 
 const openapi: FastifyPluginAsync<any> = async function (fastify) {
    
@@ -33,6 +34,4 @@ const openapi: FastifyPluginAsync<any> = async function (fastify) {
 
 }
 
-// @ts-ignore
-openapi[Symbol.for('skip-override')] = true
-export default openapi;
+export default fp(openapi);
