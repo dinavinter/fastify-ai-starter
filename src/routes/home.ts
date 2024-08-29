@@ -8,7 +8,7 @@ const routes: FastifyPluginAsyncZod = async function (fastify) {
     const routes= ['thought/text/stream','thought/object/stream','dynamic-docs']
        
     fastify.route({
-        url: '/',
+        url: '/home',
         method: 'GET',
         async handler(request, reply) {
             reply.header('Content-Type', 'text/html');

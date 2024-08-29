@@ -2,28 +2,27 @@
   "name": "fastify-ai-starter",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "packageManager": "pnpm@9.6.0",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "scripts": {
-    "build": "pnpx pkgroll && pnpm copy",
-    "copy": "cp -r ./public/ ./dist",
+    "build": "pnpm build:pkgroll",
+    "build:tsup": "pnpx tsup ./src/app.ts --outDir ./dist --target=esnext --format esm --treeshake --shims --publicDir  ",
+    "build:pkgroll": "pnpx pkgroll --clear-dist --dist ./dist  --format=esm --target=esnext --treeshake --shims    && cp -r ./public/ ./dist ",
     "dev": "pnpx tsx --env-file=.env ./src/dev.ts",
-    "dev:vercel": "pnpm build && vercel dev --listen 5005"
+    "vercel:dev": "pnpm build && vercel dev --listen 5005",
+    "vercel:build": "pnpm build && vercel build"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.54",
     "ai": "^3.3.19",
-    "dotenv": "^16.4.5",
-    "esbuild-plugin-polyfill-node": "^0.3.0",
     "fastify": "^4.28.1",
     "fastify-plugin": "^4.5.1",
-    "fastify-sse-v2": "^4.0.0",
-    "fastify-type-provider-zod": "^2.0.0",
-    "js-beautify": "^1.15.1",
-    "zod": "^3.23.8"
+    "fastify-sse-v2": "^4.0.0"
+  
+
   },
   "devDependencies": {
     "@fastify/one-line-logger": "^1.4.0",
@@ -32,12 +31,16 @@
     "@tsconfig/node22": "^22.0.0",
     "@types/js-beautify": "^1.14.3",
     "@types/node": "^22.5.0",
-    "@vercel/node": "^3.0.22",
-    "pino-pretty": "^11.2.2",
-    "tsup": "^8.2.4",
+    "@vercel/functions": "^1.4.1",
+    "@vercel/node": "^3.2.10",
+    "fastify-type-provider-zod": "^2.0.0",
+    "js-beautify": "^1.15.1",
     "tsx": "^4.18.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "zod": "^3.23.8" 
+  
   },
+  
   "main": "./dist/app.cjs",
   "module": "./dist/app.mjs",
   "types": "./dist/app.d.cts",
@@ -62,7 +65,8 @@
       "import": "./dist/dev.mjs",
       "types": "./dist/dev.d.ts"
     }
-     
+
   },
-  "bin": "./dist/dev.mjs"
+  "bin": "./dist/dev.cjs"
+   
 }
