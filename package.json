@@ -13,7 +13,7 @@
     "build:pkgroll": "pnpx pkgroll --clear-dist --dist ./dist  --format=esm --target=esnext --treeshake --shims    && cp -r ./public/ ./dist ",
     "dev": "pnpx tsx --env-file=.env ./src/dev.ts",
     "vercel:dev": "pnpm build && vercel dev --listen 5005",
-    "vercel:build": "pnpm build && vercel build"
+    "vercel:deploy": "pnpm build &&  vercel deploy"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.54",
