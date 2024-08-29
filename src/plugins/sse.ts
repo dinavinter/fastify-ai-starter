@@ -1,7 +1,7 @@
-import {FastifyPluginAsyncZod} from "fastify-type-provider-zod";
+import type {FastifyPluginAsyncZod} from "fastify-type-provider-zod";
 import {z} from "zod";
-import {FastifyReply, FastifyRequest} from "fastify";
-import FastifySSEPlugin, {EventMessage} from "fastify-sse-v2";
+import type {FastifyReply, FastifyRequest} from "fastify";
+import FastifySSEPlugin, {type EventMessage} from "fastify-sse-v2";
 import fp from "fastify-plugin";
 
 /* 

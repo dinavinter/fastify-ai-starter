@@ -31,7 +31,7 @@ const openapi: FastifyPluginAsync<any> = async function (fastify) {
             },
         },
     })
-
+ 
 }
 
 export default fp(openapi);

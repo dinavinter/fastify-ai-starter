@@ -1,23 +1,38 @@
-// Other imports
-import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify';
-import app from './app.js';
+'use strict' 
+import Fastify   from "fastify";
+import plugins from "./app";
 
-
-export const dynamic = 'force-dynamic'; // static by default, unless reading the request
 export const config = {
-        runtime: 'edge'
- }
+    runtime: 'edge',
+    supportsResponseStreaming: true,
+    unstable_allowDynamic: [
+        '/node_modules/**',
+        '/src/**',
+        '/../src/**',
+    ]
 
-const fastify = Fastify({ logger: true });
+};
 
-fastify.register(app, { prefix: '/' });
 
-export default async (req: FastifyRequest, res: FastifyReply) => {
+// export const dynamic = 'force-dynamic'; // static by default, unless reading the request
+
+
+const fastify=Fastify({logger: true});
+fastify.register(plugins, { prefix: '/' });
+
+async function fastifyReady() {
+  await fastify.ready(); 
+}
+export default async function handler (req: Request, res: Response)  {
     try {
-        await fastify.ready();
+        await fastifyReady();
         fastify.server.emit('request', req, res);
     } catch (error) {
         console.error(error);
-        res.status(500).send({ error: 'Internal Server Error' });
+        return new Response('Internal Server Error', {
+            status: 500,
+            headers: {'Content-Type': 'text/plain', 'Error-Details': JSON.stringify(error)}
+        });
     }
-};
+}
+ 
