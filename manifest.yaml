@@ -1,0 +1,18 @@
+applications:
+  -   name: fastify-ai
+      command: npm start
+      
+      routes:
+        - route: 'https://fastify-ai.cfapps.us10-001.hana.ondemand.com'
+      
+      memory: 256M
+      instances: 1
+      env:
+        NODE_OPTIONS: --max-http-header-size=80000
+        NODE_ENV: production
+        UAA_SERVICE: fastify-uaa-service
+        
+      buildpacks:
+        - https://github.com/cloudfoundry/nodejs-buildpack
+      services:
+        - fastify-uaa-service
