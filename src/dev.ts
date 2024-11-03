@@ -1,4 +1,16 @@
 import Fastify from "fastify";
+ 
+/*
+{
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'HH:MM:ss Z',
+            ignore: 'pid,hostname',
+          },
+        },
+      }
+ */
 
 const app = Fastify({
     logger: {
@@ -8,9 +20,10 @@ const app = Fastify({
     }
 })
 
+app.register(import('./plugins/log.dev'))
+
 app.register(import('./app'))
- 
-app.listen({ port: 3000, host:"0.0.0.0" }, function (err) {
+app.listen({ port: 3000}, function (err) {
     if (err) {
         app.log.error(err)
         process.exit(1)

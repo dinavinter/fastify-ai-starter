@@ -8,21 +8,23 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "build": "pnpm build:pkgroll",
+    "build": "npx pnpm build:pkgroll",
     "build:tsup": "pnpx tsup ./src/app.ts --outDir ./dist --target=esnext --format esm --treeshake --shims --publicDir  ",
     "build:pkgroll": "pnpx pkgroll --clear-dist --dist ./dist  --format=esm --target=esnext --treeshake --shims    && cp -r ./public/ ./dist ",
-    "dev": "pnpx tsx --env-file=.env ./src/dev.ts",
+    "dev": "pnpx tsx --env-file=.env ./src/index.ts",
     "vercel:dev": "pnpm build && vercel dev --listen 5005",
-    "vercel:deploy": "pnpm build &&  vercel deploy"
+    "vercel:deploy": "pnpm build &&  vercel deploy",
+    "cf:deploy": "pnpm build && cf push",
+    "start": "node ./dist/index.mjs"
+
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.54",
     "ai": "^3.3.19",
+    "cf-nodejs-logging-support": "^7.3.0",
     "fastify": "^4.28.1",
     "fastify-plugin": "^4.5.1",
     "fastify-sse-v2": "^4.0.0"
-  
-
   },
   "devDependencies": {
     "@fastify/one-line-logger": "^1.4.0",
@@ -37,10 +39,9 @@
     "js-beautify": "^1.15.1",
     "tsx": "^4.18.0",
     "typescript": "^5.5.4",
-    "zod": "^3.23.8" 
-  
+    "zod": "^3.23.8",
+    "dotenv": "^16.4.5"
   },
-  
   "main": "./dist/app.cjs",
   "module": "./dist/app.mjs",
   "types": "./dist/app.d.cts",
@@ -64,9 +65,12 @@
       "require": "./dist/dev.cjs",
       "import": "./dist/dev.mjs",
       "types": "./dist/dev.d.ts"
+    },
+    "index":{
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.mjs",
+        "types": "./dist/index.d.ts"
     }
-
   },
   "bin": "./dist/dev.cjs"
-   
 }

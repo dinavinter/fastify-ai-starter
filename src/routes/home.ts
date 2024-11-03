@@ -29,7 +29,7 @@ const routes: FastifyPluginAsyncZod = async function (fastify) {
                                       ${routes.map(route=>`<option value="${route}">`).join('')}
                                 </datalist>
                             </div>
-                             <a href="/reference" class="mx-6 p-6 my-2 text-blue-500 hover:text-blue-400 text-2xl"  target="_blank" rel="noopener noreferrer"> API References</a>
+                             <a href="/reference" class="animate-pulse mx-6 p-6 my-2 text-blue-500 hover:text-blue-400 text-2xl"  target="_blank" rel="noopener noreferrer"> API References</a>
                                   
                             </div>
                             

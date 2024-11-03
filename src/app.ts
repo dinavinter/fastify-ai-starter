@@ -14,6 +14,8 @@ const plugins:FastifyPluginAsync= fp(async function fastify( fastify, opts){
     
     //sse plugin & sse proxy 
     await fastify.register( import('./plugins/sse'))
+    
+    await fastify.register(import('./plugins/log'))
 
     //redirect default route to /reference
     fastify.get('/', async function (request, reply) {
